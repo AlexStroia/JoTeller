@@ -1,6 +1,7 @@
 package com.udacity.gradle.builditbigger.free;
 
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -8,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
@@ -15,6 +17,8 @@ import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.ads.MobileAds;
 import com.udacity.gradle.builditbigger.EndpointAsyncWithContext;
+import com.udacity.gradle.builditbigger.MainActivity;
+import com.udacity.gradle.builditbigger.NetworkUtils;
 import com.udacity.gradle.builditbigger.R;
 
 
@@ -22,6 +26,7 @@ public class MainActivityFragment extends Fragment {
 
     private Button mTellJokeBtn;
     private ProgressBar mProgress;
+    private Context mContext;
 
     public MainActivityFragment() {
     }
@@ -43,11 +48,18 @@ public class MainActivityFragment extends Fragment {
                 .build();
         mAdView.loadAd(adRequest);
 
+        mContext = this.getActivity();
         mTellJokeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 loadAd();
-                getJoke();
+                if(mContext != null) {
+                    if (NetworkUtils.isNetworkAvailable(mContext)) {
+                        getJoke();
+                    } else {
+                        Toast.makeText(mContext, R.string.no_internet,Toast.LENGTH_LONG ).show();
+                    }
+                }
             }
         });
         return root;
